@@ -1,11 +1,7 @@
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Wextra -O2
 
-OPENSSL_CFLAGS  = $(shell pkg-config --cflags openssl)
-OPENSSL_LDFLAGS = $(shell pkg-config --libs openssl)
-
-INCLUDES = -Iinclude -Isrc/server -Isrc/client $(OPENSSL_CFLAGS)
-LDFLAGS = $(OPENSSL_LDFLAGS)
+INCLUDES = -Iinclude -Isrc/server -Isrc/client
 
 BUILD_DIR = build
 
@@ -26,10 +22,10 @@ dirs:
 	mkdir -p $(BUILD_DIR)
 
 $(SERVER_OUT): $(SERVER_SRC)
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $^ $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $^
 
 $(CLIENT_OUT): $(CLIENT_SRC)
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $^ $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $^
 
 clean:
 	rm -rf $(BUILD_DIR) $(FILE1) $(FILE2)

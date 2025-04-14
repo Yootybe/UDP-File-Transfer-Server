@@ -9,20 +9,12 @@ This project implements a UDP-based file transfer service that:
 ## Requirements
 
 - C++17 compatible `g++` compiler
-- OpenSSL development package (`libssl-dev`) for generating 'file id' using OpenSSL hash
 
 ## Build
 
 To build the project:
 
-1. Make sure you have `g++` and OpenSSL installed:
-
-   ```bash
-   sudo apt update
-   sudo apt install g++ libssl-dev
-   ```
-
-2. From the project root directory, run:
+1. From the project root directory, run:
 
    ```bash
    make

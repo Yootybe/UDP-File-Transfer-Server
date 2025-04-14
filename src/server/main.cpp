@@ -4,7 +4,6 @@
 #include <cstring>
 #include <netinet/in.h>
 #include <sys/socket.h>
-#include <unistd.h>
 
 #include "help_funcs.h"
 #include "packet_info.h"

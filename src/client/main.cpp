@@ -2,7 +2,6 @@
 #include <fcntl.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
-#include <unistd.h>
 
 #include <algorithm>
 #include <chrono>
@@ -14,9 +13,41 @@
 #include <thread>
 #include <unordered_map>
 #include <vector>
+#include <sys/stat.h>
 
 #include "help_funcs.h"
 #include "packet_info.h"
+
+// Use filepath, file size, info about permissions and owners to generate unique 8 chars file id
+std::optional<std::array<std::byte, 8>> generate_8_size_file_id(const std::string& filepath)
+{
+    struct stat file_info;
+    if (stat(filepath.c_str(), &file_info) != 0)
+    {
+        std::cerr << "Error getting file info for '" << filepath << "'" << std::endl;
+        return std::nullopt;
+    }
+
+    const off_t file_size = file_info.st_size;
+    const uid_t owner_id = file_info.st_uid;
+    const mode_t permissions = file_info.st_mode;
+
+    const std::string data = filepath
+                           + std::to_string(file_size)
+                           + std::to_string(owner_id)
+                           + std::to_string(permissions);
+
+    std::hash<std::string> hasher;
+    const size_t hashed = hasher(data);
+
+    std::array<std::byte, 8> id;
+    for (size_t i = 0; i < 8; ++i)
+    {
+        id[i] = static_cast<std::byte>((hashed >> (i * 8)) & 0xFF);
+    }
+
+    return id;
+}
 
 struct Packet
 {
@@ -90,7 +121,7 @@ int main(int argc, char* argv[])
     }
 
     // Generate file ID
-    const auto opt_file_id = filehash::generate_8_size_file_id(filepath);
+    const auto opt_file_id = generate_8_size_file_id(filepath);
     if (!opt_file_id)
     {
         std::cerr << "An error occurred while creating the file ID" << std::endl;
